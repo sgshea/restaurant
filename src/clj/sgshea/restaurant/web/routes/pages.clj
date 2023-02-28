@@ -18,7 +18,7 @@
 (defn home [{:keys [flash] :as request}]
   (let [{:keys [query-fn]} (utils/route-data request)]
     (layout/render request "home.html" {:ingredients (query-fn :get-ingredients {})
-                                                       :errors (:errors flash)})))
+                                        :errors (:errors flash)})))
 
 ;; Routes
 (defn page-routes [_opts]

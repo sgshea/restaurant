@@ -45,6 +45,7 @@
  :router/core
  {:routes #ig/ref :router/routes}
  :reitit.routes/pages {:base-path "",
+                       :query-fn #ig/ref :db.sql/query-fn
                        :env #ig/ref :system/env}
  :db.sql/query-fn {:conn #ig/ref :db.sql/connection,
                    :options {},

@@ -2,6 +2,7 @@
            "resources" "src/cljs"]
 
  :deps    {org.clojure/clojure {:mvn/version "1.11.1"}
+           thheller/shadow-cljs {:mvn/version "2.21.0"}
 
            ;; Routing
  metosin/reitit {:mvn/version "0.5.18"}

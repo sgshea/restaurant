@@ -21,4 +21,14 @@
       (catch Exception e
         (log/error e "failed to create ingredient!")
         (-> (http-response/found "/")
-            (assoc :flash {:errors {:unknown (.getMessage e)}}))))))
+            (assoc :flash {:errors {:unknown (.getMessage e)}})))))) 
+
+(defn get-ingredients!
+  [req]
+  (log/debug "getting ingredients")
+  (let [{:keys [query-fn]} (utils/route-data req)]
+    (try
+      (http-response/ok (query-fn :get-ingredients))
+      (catch Exception e
+        (log/error e "failed to get ingredients!")
+        (-> (http-response/found "/"))))))

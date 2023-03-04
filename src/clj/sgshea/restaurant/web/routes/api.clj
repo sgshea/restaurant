@@ -1,14 +1,15 @@
 (ns sgshea.restaurant.web.routes.api
   (:require
-    [sgshea.restaurant.web.controllers.health :as health]
-    [sgshea.restaurant.web.middleware.exception :as exception]
-    [sgshea.restaurant.web.middleware.formats :as formats]
-    [integrant.core :as ig]
-    [reitit.coercion.malli :as malli]
-    [reitit.ring.coercion :as coercion]
-    [reitit.ring.middleware.muuntaja :as muuntaja]
-    [reitit.ring.middleware.parameters :as parameters]
-    [reitit.swagger :as swagger]))
+   [sgshea.restaurant.web.controllers.health :as health]
+   [sgshea.restaurant.web.controllers.ingredients :as ingredients]
+   [sgshea.restaurant.web.middleware.exception :as exception]
+   [sgshea.restaurant.web.middleware.formats :as formats]
+   [integrant.core :as ig]
+   [reitit.coercion.malli :as malli]
+   [reitit.ring.coercion :as coercion]
+   [reitit.ring.middleware.muuntaja :as muuntaja]
+   [reitit.ring.middleware.parameters :as parameters]
+   [reitit.swagger :as swagger]))
 
 ;; Routes
 (defn api-routes [_opts]
@@ -17,7 +18,9 @@
            :swagger {:info {:title "sgshea.restaurant API"}}
            :handler (swagger/create-swagger-handler)}}]
    ["/health"
-    {:get health/healthcheck!}]])
+    {:get health/healthcheck!}]
+   ["/ingredients"
+    {:get ingredients/get-ingredients!}]])
 
 (defn route-data
   [opts]

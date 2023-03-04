@@ -2,47 +2,65 @@
     (:require
      [reagent.core :as r]
      [reagent.dom :as d]
-     [reitit.core :as reitit]
-     [goog.events :as events]
-     [goog.history.EventType :as HistoryEventType])
-  (:import goog.History))
+     [ajax.core :refer [GET POST]]))
+
+;; -------------------------
+;; Resusable Components
+(defn input-text 
+  [val]
+  [:input {:type :text
+           :value val
+           :on-change #(reset! val (-> % .-target .-value))}])
 
 ;; -------------------------
 ;; Views
+(defn handler [response]
+  (.log js/console (str response)))
 
-(def session (r/atom {:page :home}))
+(defn error-handler [{:keys [status status-text]}]
+  (.log js/console
+    (str "something bad happened: " status " " status-text)))
+
+(defonce ingredient-name
+  (r/atom ""))
+(defonce ingredient-amount
+  (r/atom 0))
+
+(defn name-input []
+  [:input {:type "text"
+           :value @ingredient-name
+           :on-change #(reset! ingredient-name (-> % .-target .-value))}])
+(defn amount-input []
+  [:input {:type "number"
+           :value @ingredient-amount
+           :on-change #(reset! ingredient-amount (-> % .-target .-value))}])
+
+;; GET health
+(defn get-health []
+  (GET "/api/health" {:handler handler}))
+(defn get-health-button []
+  [:input {:type "button"
+           :value "Get Health"
+           :on-click get-health}])
+
+(defn get-ingredients []
+  (GET "/api/ingredients" {:handler handler}))
+(defn get-ingredients-button []
+  [:input {:type "button"
+           :value "Get Ingredients"
+           :on-click get-ingredients}])
 
 (defn home-page []
-  [:div "Home"])
+  [:div
+   [:p "name is " @ingredient-name]
+   [name-input]
+   [:p "amount is " @ingredient-amount]
+   [amount-input]
+   [:p "Get ingredients (to log)"]
+   [get-ingredients-button]
+   [get-health-button]
+   ])
 
-(defn about-page []
-  [:div "About"])
-
-(def pages
-  {:home #'home-page
-   :about #'about-page})
-
-(defn page []
-  [(pages (:page @session))])
-
-(def router
-  (reitit/router
-   [["/" :home]
-    ["about" :about]]))
-
-(defn match-route [uri]
-  (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
-       (reitit/match-by-path router)
-       :data
-       :name))
-
-(defn hook-browser-navigation! []
-  (doto (History.)
-    (events/listen
-      HistoryEventType/NAVIGATE
-      (fn [event]
-        (swap! session assoc :page (match-route (.-token event)))))
-    (.setEnabled true)))
 ;; -------------------------
 ;; Initialize app
 
